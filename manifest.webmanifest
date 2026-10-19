@@ -1,0 +1,17 @@
+{
+  "name": "词脉 LexiLoop · 六级与雅思词汇训练",
+  "short_name": "词脉",
+  "description": "25 天倒序词汇学习、艾宾浩斯复习与六级 / IELTS 综合训练。",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f3ea",
+  "theme_color": "#102a2e",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

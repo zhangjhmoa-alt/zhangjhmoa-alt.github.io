@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#102a2e" />
+    <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="词脉" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <meta
+      name="description"
+      content="基于 100 份词汇课堂笔记的 25 天倒序学习、艾宾浩斯复习与六级 / 雅思综合训练系统。"
+    />
+    <title>词脉 LexiLoop · 六级 × 雅思词汇训练场</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <a class="brand" href="#dashboard" aria-label="词脉首页">
+          <span class="brand-mark">词</span>
+          <span><strong>词脉</strong><small>LEXILOOP</small></span>
+        </a>
+
+        <nav class="nav-list">
+          <button class="nav-item active" data-view="dashboard">
+            <span>⌁</span><span>今日总览</span><kbd>1</kbd>
+          </button>
+          <button class="nav-item" data-view="learn">
+            <span>◫</span><span>深度学习</span><kbd>2</kbd>
+          </button>
+          <button class="nav-item" data-view="recall">
+            <span>↻</span><span>双向记忆</span><kbd>3</kbd>
+          </button>
+          <button class="nav-item" data-view="practice">
+            <span>✦</span><span>综合训练</span><kbd>4</kbd>
+          </button>
+          <button class="nav-item" data-view="notebook">
+            <span>◇</span><span>生词本</span><kbd>5</kbd>
+          </button>
+          <button class="nav-item" data-view="plan">
+            <span>▦</span><span>25 天计划</span><kbd>6</kbd>
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <span class="pulse-dot"></span>
+          <p><strong>自适应复现已开启</strong><br />错词与收藏词会自动进入后续训练。</p>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="data-actions" aria-label="学习数据管理">
+            <button class="ghost-button" id="exportProgress">导出进度</button>
+            <button class="ghost-button" id="importProgressButton">导入进度</button>
+            <input id="importProgressFile" type="file" accept="application/json,.json" hidden />
+          </div>
+          <button class="ghost-button" id="resetProgress">重置本机进度</button>
+          <a class="privacy-link" href="./privacy.html">隐私说明</a>
+          <small>数据仅保存在本机，可随时备份</small>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobileMenu" aria-label="打开导航">☰</button>
+          <div>
+            <p class="eyebrow" id="todayLabel">DAY 01 · 词汇课 100—97</p>
+            <h1 id="viewTitle">把词汇变成真正可调用的语言</h1>
+          </div>
+          <div class="top-actions">
+            <button class="date-chip" id="dayPickerButton" aria-haspopup="dialog">
+              <span>学习日</span><strong id="dayChip">01 / 25</strong>
+            </button>
+            <button class="avatar" aria-label="学习者">Z</button>
+          </div>
+        </header>
+
+        <section class="view active" id="dashboardView" data-view-panel="dashboard">
+          <div class="hero-grid">
+            <article class="hero-card">
+              <div class="hero-copy">
+                <p class="eyebrow light">TODAY'S MISSION</p>
+                <h2>看见一个词，<br />也看见它的<span>来路。</span></h2>
+                <p>第 1 天从视觉、心灵与呼吸出发。先理解词根，再用高难语境把 4 课词汇压进长期记忆。</p>
+                <div class="hero-actions">
+                  <button class="primary-button" data-go="learn">开始今日学习 <span>→</span></button>
+                  <button class="text-button" data-go="practice">直接进入训练</button>
+                </div>
+              </div>
+              <div class="orbit" aria-hidden="true">
+                <span class="orbit-core">vis</span>
+                <span class="orbit-word one">psyche</span>
+                <span class="orbit-word two">spir</span>
+                <span class="orbit-word three">opt</span>
+                <span class="orbit-word four">trude</span>
+              </div>
+            </article>
+
+            <article class="progress-card">
+              <div class="card-heading">
+                <div><p class="eyebrow">TODAY</p><h3>学习进度</h3></div>
+                <span class="status-pill">进行中</span>
+              </div>
+              <div class="progress-ring" id="progressRing" style="--progress: 0deg">
+                <div><strong id="progressPercent">0%</strong><small>已完成</small></div>
+              </div>
+              <div class="progress-legend">
+                <div><span class="legend-dot mint"></span><b id="learnedCount">0</b><small>已学习</small></div>
+                <div><span class="legend-dot amber"></span><b id="dueCount">0</b><small>待复习</small></div>
+                <div><span class="legend-dot coral"></span><b id="weakCount">0</b><small>需强化</small></div>
+              </div>
+            </article>
+          </div>
+
+          <div class="section-heading">
+            <div><p class="eyebrow">TODAY'S FOUR LESSONS</p><h2>今日四课</h2></div>
+            <button class="text-button" data-go="plan">查看完整计划 →</button>
+          </div>
+          <div class="lesson-grid" id="todayLessons"></div>
+
+          <div class="dashboard-lower">
+            <article class="schedule-card">
+              <div class="card-heading">
+                <div><p class="eyebrow">MEMORY RHYTHM</p><h3>今日复习节奏</h3></div>
+                <span class="mini-label">艾宾浩斯</span>
+              </div>
+              <div class="timeline" id="reviewTimeline"></div>
+            </article>
+            <article class="quote-card">
+              <span>“</span>
+              <p>Words are, of course, the most powerful drug used by mankind.</p>
+              <small>— Rudyard Kipling</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="learnView" data-view-panel="learn">
+          <div class="section-heading sticky-heading">
+            <div><p class="eyebrow">ROOTS BEFORE ROUTE</p><h2>深度学习 · 先词根，再词义</h2></div>
+            <div class="segmented" id="lessonFilter" aria-label="课程筛选"></div>
+          </div>
+          <div class="root-banner" id="rootBanner"></div>
+          <div class="word-toolbar">
+            <p><strong id="wordCount">0</strong> 个词条 · 点击展开，长按收藏</p>
+            <label class="search-box"><span>⌕</span><input id="wordSearch" placeholder="搜索单词、词义或短语" /></label>
+          </div>
+          <div class="word-list" id="wordList"></div>
+        </section>
+
+        <section class="view" id="recallView" data-view-panel="recall">
+          <div class="recall-layout">
+            <div class="recall-stage">
+              <div class="section-heading">
+                <div><p class="eyebrow">ACTIVE RECALL</p><h2>双向记忆</h2></div>
+                <div class="segmented" id="recallDirection">
+                  <button class="active" data-direction="en-zh">第一遍 · 英→中</button>
+                  <button data-direction="zh-en">第二遍 · 中→英</button>
+                </div>
+              </div>
+              <div class="queue-strip">
+                <span>今日队列 <b id="queuePosition">1 / 1</b></span>
+                <div><span id="memoryStageLabel">首次学习</span><i id="memoryDots"></i></div>
+              </div>
+              <article class="flashcard" id="flashcard">
+                <div class="flashcard-top"><span id="flashLesson">LESSON 100</span><button id="flashFavorite" aria-label="收藏">☆</button></div>
+                <div class="flash-prompt" id="flashPrompt"></div>
+                <p class="recall-hint">先在心里完整作答，再选择结果</p>
+                <div class="reveal-panel" id="revealPanel" hidden></div>
+                <button class="reveal-button" id="revealButton">显示答案</button>
+              </article>
+              <div class="recall-actions" id="recallActions" hidden>
+                <button class="forgot-button" id="forgotButton"><span>×</span> 忘记了 <small>重新强化</small></button>
+                <button class="remember-button" id="rememberButton"><span>✓</span> 已记住 <small>进入下一节点</small></button>
+              </div>
+            </div>
+            <aside class="memory-panel">
+              <p class="eyebrow">MEMORY MAP</p>
+              <h3>每个词都走完一条记忆曲线</h3>
+              <div class="curve-graphic" aria-label="复习节点：今天、1天、2天、4天、7天、15天、30天">
+                <svg viewBox="0 0 320 150" role="img">
+                  <path d="M12,120 C65,18 92,106 132,68 C178,24 205,92 308,32" />
+                  <g><circle cx="12" cy="120" r="6"/><circle cx="70" cy="66" r="6"/><circle cx="132" cy="68" r="6"/><circle cx="188" cy="56" r="6"/><circle cx="240" cy="50" r="6"/><circle cx="308" cy="32" r="6"/></g>
+                </svg>
+                <div class="curve-labels"><span>今天</span><span>+1天</span><span>+2天</span><span>+4天</span><span>+7天</span><span>+30天</span></div>
+              </div>
+              <div class="memory-stats" id="memoryStats"></div>
+              <div class="tip-box"><strong>忘记不是失败。</strong><p>每次点“忘记了”，这个词会回到短间隔节点，并提高后续阅读与选词填空中的出现权重。</p></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="practiceView" data-view-panel="practice">
+          <div class="section-heading">
+            <div><p class="eyebrow">CET-6 × IELTS 7+</p><h2>综合训练场</h2></div>
+            <div class="coverage-badge"><span id="coverageCount">0</span><small>今日词条覆盖</small></div>
+          </div>
+          <div class="practice-tabs" id="practiceTabs">
+            <button class="active" data-practice="reading">阅读理解</button>
+            <button data-practice="cloze">选词填空</button>
+            <button data-practice="translation">中文段落翻译</button>
+            <button data-practice="results">训练报告</button>
+          </div>
+          <div class="practice-panel active" id="readingPanel" data-practice-panel="reading"></div>
+          <div class="practice-panel" id="clozePanel" data-practice-panel="cloze"></div>
+          <div class="practice-panel" id="translationPanel" data-practice-panel="translation"></div>
+          <div class="practice-panel" id="resultsPanel" data-practice-panel="results"></div>
+        </section>
+
+        <section class="view" id="notebookView" data-view-panel="notebook">
+          <div class="section-heading">
+            <div><p class="eyebrow">PERSONAL LEXICON</p><h2>生词本</h2></div>
+            <div class="notebook-summary"><strong id="notebookCount">0</strong><span>个待攻克词汇</span></div>
+          </div>
+          <div class="notebook-filters" id="notebookFilters">
+            <button class="active" data-book-filter="all">全部</button>
+            <button data-book-filter="wrong">答错加入</button>
+            <button data-book-filter="favorite">主动收藏</button>
+            <button data-book-filter="hard">高频遗忘</button>
+          </div>
+          <div class="notebook-empty" id="notebookEmpty">
+            <span>◇</span><h3>你的生词本还是空的</h3><p>长按做题或学习中的词汇即可收藏；答错的词会自动进入。</p>
+          </div>
+          <div class="notebook-grid" id="notebookGrid"></div>
+        </section>
+
+        <section class="view" id="planView" data-view-panel="plan">
+          <div class="section-heading">
+            <div><p class="eyebrow">25-DAY ROADMAP</p><h2>100 → 01 倒序学习计划</h2></div>
+            <p class="plan-note">每日 4 课 · 学习 × 双向回忆 × 综合训练</p>
+          </div>
+          <div class="plan-grid" id="planGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="word-dialog" id="wordDialog">
+      <button class="dialog-close" id="dialogClose" aria-label="关闭">×</button>
+      <p class="eyebrow" id="dialogLesson">LESSON 100</p>
+      <h2 id="dialogTerm">vision</h2>
+      <div id="dialogDetail"></div>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="dialogSpeak">🔊 系统朗读</button>
+        <button class="primary-button full" id="dialogFavorite">☆ 收藏到生词本</button>
+      </div>
+    </dialog>
+
+    <dialog class="day-dialog" id="dayDialog">
+      <button class="dialog-close" id="dayDialogClose" aria-label="关闭">×</button>
+      <p class="eyebrow">JUMP TO A DAY</p>
+      <h2>选择学习日</h2>
+      <div class="day-picker-grid" id="dayPickerGrid"></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./exercises.js"></script>
+    <script src="./app.js"></script>
+    <script src="./pwa.js"></script>
+  </body>
+</html>
